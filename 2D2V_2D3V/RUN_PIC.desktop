@@ -1,0 +1,7 @@
+[Desktop Entry]
+Comment=Launches Jupyter notebook
+Terminal=true
+Name=IPython
+Exec=/home/tejas/Documents/2DPIC_edit2/2D2V_2D3V/./PIC.sh
+Type=Application
+Name[en_IN]=RUN_PIC
