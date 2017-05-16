@@ -44,6 +44,63 @@ def periodic_ghost(field, ghost_cells):
 
     return field
 
+
+
+def histogram_deposition(current_indices_flat, currents_flat, grid_elements):
+    
+    '''
+    function: histogram_deposition(current_indices_flat, currents_flat, grid)
+    
+    inputs: current_indices_flat, currents_flat, grid_elements
+    
+    current_indices_flat, currents_flat: They denote the indices and the currents
+    to be deposited on the flattened current vector.
+    
+    grid_elements: The number of elements present the matrix/vector representing the 
+    currents.   
+    
+    
+    '''
+    
+    
+    # setting default indices and current for histogram deposition
+    indices_fix = af.data.range(grid_elements + 1, dtype = af.Dtype.s64)
+    currents_fix = 0 * af.data.range(grid_elements + 1, dtype = af.Dtype.f64)
+    
+    
+    # Concatenating the indices and currents in a single vector 
+    
+    combined_indices_flat  = af.join(0, indices_fix, current_indices_flat)
+    combined_currents_flat = af.join(0, currents_fix, currents_flat)
+    
+    
+    # Sort by key operation
+    indices, currents = af.sort_by_key(combined_indices_flat, combined_currents_flat, dim=0)
+    
+    # scan by key operation with default binary addition operation which sums up currents 
+    # for the respective indices
+    
+    Histogram_scan = af.scan_by_key(indices, currents)
+    
+    # diff1 operation to determine the uniques indices in the current
+    diff1_op = af.diff1(indices, dim = 0)
+    
+    
+    # Determining the uniques indices for current deposition
+    indices_unique = af.where(diff1_op > 0)
+    
+    # Derming the current vector
+    
+    J_flat = Histogram_scan[indices_unique]
+    
+    af.eval(J_flat)
+    
+    return J_flat
+
+
+
+
+
 # b1 charge depositor
 def charge_b1_depositor(charge_electron,\
                         positions_x, positions_y,\
@@ -223,11 +280,7 @@ def cloud_charge_deposition(charge_electron,\
 
     input_indices = (rho_x_indices*(y_grid.elements())+ rho_y_indices)
 
-    rho, temp = np.histogram(input_indices,\
-                             bins=elements,\
-                             range=(0, elements),\
-                             weights=rho_values_at_these_indices\
-                            )
+    rho = histogram_deposition(input_indices, rho_values_at_these_indices, elements)
     
     rho = af.data.moddims(af.to_array(rho), y_grid.elements(), x_grid.elements())
     

@@ -48,6 +48,58 @@ def periodic_ghost(field, ghost_cells):
 
 
 
+def histogram_deposition(current_indices_flat, currents_flat, grid_elements):
+    
+    '''
+    function: histogram_deposition(current_indices_flat, currents_flat, grid)
+    
+    inputs: current_indices_flat, currents_flat, grid_elements
+    
+    current_indices_flat, currents_flat: They denote the indices and the currents
+    to be deposited on the flattened current vector.
+    
+    grid_elements: The number of elements present the matrix/vector representing the 
+    currents.   
+    
+    
+    '''
+    
+    
+    # setting default indices and current for histogram deposition
+    indices_fix = af.data.range(grid_elements + 1, dtype = af.Dtype.s64)
+    currents_fix = 0 * af.data.range(grid_elements + 1, dtype = af.Dtype.f64)
+    
+    
+    # Concatenating the indices and currents in a single vector 
+    
+    combined_indices_flat  = af.join(0, indices_fix, current_indices_flat)
+    combined_currents_flat = af.join(0, currents_fix, currents_flat)
+    
+    
+    # Sort by key operation
+    indices, currents = af.sort_by_key(combined_indices_flat, combined_currents_flat, dim=0)
+    
+    # scan by key operation with default binary addition operation which sums up currents 
+    # for the respective indices
+    
+    Histogram_scan = af.scan_by_key(indices, currents)
+    
+    # diff1 operation to determine the uniques indices in the current
+    diff1_op = af.diff1(indices, dim = 0)
+    
+    
+    # Determining the uniques indices for current deposition
+    indices_unique = af.where(diff1_op > 0)
+    
+    # Derming the current vector
+    
+    J_flat = Histogram_scan[indices_unique]
+    
+    af.eval(J_flat)
+    
+    return J_flat
+
+
 
 
 
@@ -417,11 +469,7 @@ def Umeda_2003(    charge_electron,\
     # Current deposition using numpy's histogram
     input_indices = (Jx_x_indices*(y_grid.elements()) + Jx_y_indices)
     
-    Jx_Yee, temp = np.histogram(input_indices,\
-                                      bins=elements,\
-                                      range=(0, elements),\
-                                      weights=Jx_values_at_these_indices\
-                                     )
+    Jx_Yee = histogram_deposition(input_indices, Jx_values_at_these_indices, elements)
     
     Jx_Yee = af.data.moddims(af.to_array(Jx_Yee), y_grid.elements(), x_grid.elements())
 
@@ -429,11 +477,7 @@ def Umeda_2003(    charge_electron,\
     # Jy
     input_indices = (Jy_x_indices*(y_grid.elements()) + Jy_y_indices)
     
-    Jy_Yee, temp = np.histogram(input_indices,\
-                                      bins=elements,\
-                                      range=(0, elements),\
-                                      weights=Jy_values_at_these_indices\
-                                     )
+    Jy_Yee = histogram_deposition(input_indices, Jy_values_at_these_indices, elements)
     
     Jy_Yee = af.data.moddims(af.to_array(Jy_Yee), y_grid.elements(), x_grid.elements())
 
@@ -449,11 +493,7 @@ def Umeda_2003(    charge_electron,\
 
     input_indices = (Jz_x_indices*(y_grid.elements()) + Jz_y_indices)
     
-    Jz_Yee, temp = np.histogram(input_indices,\
-                                      bins=elements,\
-                                      range=(0, elements),\
-                                      weights=Jz_values_at_these_indices\
-                                     )
+    Jz_Yee = histogram_deposition(input_indices, Jz_values_at_these_indices, elements)
     
     Jz_Yee = af.data.moddims(af.to_array(Jz_Yee),  y_grid.elements(), x_grid.elements())
     
