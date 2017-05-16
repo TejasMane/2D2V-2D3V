@@ -89,7 +89,7 @@ def histogram_deposition(current_indices_flat, currents_flat, grid_elements):
     # Determining the uniques indices for current deposition
     indices_unique = af.where(diff1_op > 0)
     
-    # Derming the current vector
+    # Determining the current vector
     
     J_flat = Histogram_scan[indices_unique]
     
