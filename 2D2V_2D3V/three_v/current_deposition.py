@@ -467,7 +467,7 @@ def Umeda_2003(    charge_electron,\
                                                    )
     
     # Current deposition using numpy's histogram
-    input_indices = (Jx_x_indices*(y_grid.elements()) + Jx_y_indices)
+    input_indices = (Jx_x_indices*(y_grid.elements()) + Jx_y_indices).as_type(af.Dtype.s64)
     
     Jx_Yee = histogram_deposition(input_indices, Jx_values_at_these_indices, elements)
     
@@ -475,7 +475,7 @@ def Umeda_2003(    charge_electron,\
 
     
     # Jy
-    input_indices = (Jy_x_indices*(y_grid.elements()) + Jy_y_indices)
+    input_indices = (Jy_x_indices*(y_grid.elements()) + Jy_y_indices).as_type(af.Dtype.s64)
     
     Jy_Yee = histogram_deposition(input_indices, Jy_values_at_these_indices, elements)
     
@@ -491,7 +491,7 @@ def Umeda_2003(    charge_electron,\
                                                        length_domain_x, length_domain_y\
                                                      )
 
-    input_indices = (Jz_x_indices*(y_grid.elements()) + Jz_y_indices)
+    input_indices = (Jz_x_indices*(y_grid.elements()) + Jz_y_indices).as_type(af.Dtype.s64)
     
     Jz_Yee = histogram_deposition(input_indices, Jz_values_at_these_indices, elements)
     

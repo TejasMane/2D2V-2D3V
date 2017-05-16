@@ -354,19 +354,19 @@ def Umeda_2003(    charge_electron,\
                                                    )
     
     # Current deposition using numpy's histogram
-    input_indices = (Jx_x_indices*(y_grid.elements()) + Jx_y_indices)
-    
+    input_indices = (Jx_x_indices*(y_grid.elements()) + Jx_y_indices).as_type(af.Dtype.s64)
+        
     # Computing Jx_Yee
     
-    Jx_Yee, temp = histogram_deposition(input_indices, Jx_values_at_these_indices, elements)
+    Jx_Yee = histogram_deposition(input_indices, Jx_values_at_these_indices, elements)
     
     Jx_Yee = af.data.moddims(af.to_array(Jx_Yee), y_grid.elements(), x_grid.elements())
     
     # Computing Jy_Yee
     
-    input_indices = (Jy_x_indices*(y_grid.elements()) + Jy_y_indices)
+    input_indices = (Jy_x_indices*(y_grid.elements()) + Jy_y_indices).as_type(af.Dtype.s64)
     
-    Jy_Yee, temp = histogram_deposition(input_indices, Jy_values_at_these_indices, elements)
+    Jy_Yee = histogram_deposition(input_indices, Jy_values_at_these_indices, elements)
     
     Jy_Yee = af.data.moddims(af.to_array(Jy_Yee), y_grid.elements(), x_grid.elements())
 
@@ -888,7 +888,7 @@ def Esirkepov_2D(  charge_electron,\
                                                            )
     
     # Current deposition using numpy's histogram
-    input_indices = (Jx_x_indices*(y_grid.elements()) + Jx_y_indices)
+    input_indices = (Jx_x_indices*(y_grid.elements()) + Jx_y_indices).as_type(af.Dtype.s64)
     
     # Computing Jx_Yee
     
@@ -898,7 +898,7 @@ def Esirkepov_2D(  charge_electron,\
     
     # Computing Jy_Yee
     
-    input_indices = (Jy_x_indices*(y_grid.elements()) + Jy_y_indices)
+    input_indices = (Jy_x_indices*(y_grid.elements()) + Jy_y_indices).as_type(af.Dtype.s64)
     
     Jy_Yee = histogram_deposition(input_indices, Jy_values_at_these_indices, elements)
     

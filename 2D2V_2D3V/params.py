@@ -26,8 +26,8 @@ number_of_electrons = 400000
 
 # Divisions in x grid
 divisions_domain_x = 100
-divisions_domain_y = 100
+divisions_domain_y = 1
 
 amplitude_perturbed = 0.5
 k_x                 = 2 * np.pi
-k_y                 = 2 * np.pi
+k_y                 = 0#2 * np.pi
