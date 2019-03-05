@@ -7,3 +7,6 @@ The particle in cell (PIC) method used to solve the Vlasov-Maxwell system of par
 * A Finite Difference Time Domain(FDTD) algorithm to evolve the electric and magnetic fields in the domain.
 * A direct charge deposition scheme with charge conserving current deposition schemes based on the Umeda et.al (2003) and Esirkepov (2001) algorithms.
 * Support for higher order B-splines based shape factors and completely vectorized using Arrayfire's high performance libraries capable of running on CPU's, OpenCL and Nvidia CUDA devices.
+
+
+Further details can be found on PIC_thesis.pdf
